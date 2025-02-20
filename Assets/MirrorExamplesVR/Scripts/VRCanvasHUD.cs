@@ -5,7 +5,6 @@ using Mirror;
 using UnityEngine.UI;
 using Mirror.Discovery;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class VRCanvasHUD : MonoBehaviour
 {

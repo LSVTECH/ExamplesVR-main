@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 
 public class VRNetworkPlayerScript : NetworkBehaviour
 {
@@ -23,6 +24,7 @@ public class VRNetworkPlayerScript : NetworkBehaviour
     public int playerScore = 0;  // SyncVar para el puntaje (int)
 
     public TMP_Text playerScoreText;
+    public TMP_Text playerGlobalScoreText;
 
     // Lista de jugadores y nombre
     public readonly static List<VRNetworkPlayerScript> playersList = new List<VRNetworkPlayerScript>();
@@ -37,6 +39,11 @@ public class VRNetworkPlayerScript : NetworkBehaviour
     public NetworkIdentity leftHandObject;
     public VRWeapon vrWeaponRight;
     public VRWeapon vrWeaponLeft;
+
+    private void Start()
+    {
+        ChangeLocalText(0, 0);
+    }
 
     #region Configuración Inicial
     public override void OnStartLocalPlayer()
@@ -98,14 +105,30 @@ public class VRNetworkPlayerScript : NetworkBehaviour
     {
         Debug.Log($"[OnPlayerScoreChanged] {oldScore} -> {newScore} (Jugador: {playerName})");
 
+        Debug.LogWarning(isLocalPlayer);
         if (playerScoreText != null)
         {
-            playerScoreText.text = $"Score: {newScore}";
-            Debug.Log($"[UI] Texto actualizado: {newScore}");
+            ChangeLocalText(oldScore, newScore);
         }
         else
         {
             Debug.LogError("[UI] playerScoreText es null");
+        }
+    }
+
+    private void ChangeLocalText(int oldScore, int newScore)
+    {
+        if (isLocalPlayer)
+        {
+            playerScoreText.text = $"Score: {newScore}";
+            playerGlobalScoreText.text = "";
+            Debug.LogWarning($"[UI] Texto actualizado: {newScore}");
+        }
+        else
+        {
+            playerScoreText.text = "";
+            playerGlobalScoreText.text = $"Score: {newScore}";
+            Debug.LogWarning($"[UI] Texto actualizado vacio");
         }
     }
 
